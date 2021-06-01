@@ -1,0 +1,48 @@
+#!/usr/bin/env node
+const program = require('commander')
+const chalk = require('chalk')
+const ora = require('ora')
+const download = require('download-git-repo')
+const tplObj = require(`${__dirname}/../template`)
+
+program
+    .usage(`<template-name> [project-name]`)
+
+program.parse(progress.argv)
+
+if (program.args.length < 1) { 
+    return program.help()
+}
+
+const templateName = program.args[0]
+
+const projectName = program.args[1]
+
+if (!tplObj[templateName]) {
+    return console.log(chalk.red('\n template does not exit! \n '))
+}
+
+if (!projectName) {
+    return console.log(chalk.red('\n projectName should not be empty! \n '))
+}
+
+url = tplObj[templateName]
+console.log(chalk.white('\n Start generating... \n'))
+
+const spinner = ora("Downloading...") // 过渡效果
+spinner.start()
+
+download(
+    url,
+    projectName,
+    err => {
+        if (err) {
+            spinner.fail()
+            return console.log(chalk.red(`Generation failed. ${err}`))
+        }
+        spinner.succeed()
+        console.log(chalk.green('\n Generation completed!'))
+        console.log('\n To get started')
+        console.log(`\n    cd ${projectName} \n`)
+    }
+)

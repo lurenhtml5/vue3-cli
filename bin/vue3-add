@@ -1,0 +1,53 @@
+#!/usr/bin/env node
+
+const chalk = require('chalk') // 修改控制台样式
+
+const inquirer = require('inquirer')
+
+const fs = require('fs')
+
+const templateLocalUrl = `../template.json`
+
+const tplObj = require(templateLocalUrl) // 读取模版
+
+let question = [
+    {
+        name: 'name',
+        type: 'input',
+        message: '请输入模版名称',
+        validate: (val) => {
+            if (val === '') {
+                return 'name is required!'
+            } else if (tplObj[val]) {
+                return 'template has already existed'
+            }
+            return true
+        }
+    },
+    {
+        name: 'url',
+        type: 'input',
+        message: 'please input template git-url',
+        validate: (val) => {
+            if (!val) {
+                return 'url is required'
+            }
+            return true
+        }
+    }
+]
+
+inquirer
+    .prompt(question)
+    .then(answers => {
+        const { name, url } = answers
+        tplObj[name] = url.replace(/[\u0000-\u0019]/g, '')
+        fs.writeFile(templateLocalUrl, JSON.stringify(tplObj), 'utf-8', err => {
+            err && console.log(err)
+            console.log('\n')
+            console.log(chalk.green('Added successfully!\n'))
+            console.log(chalk.grey('The latest template list is: \n'))
+            console.log(tplObj)
+            console.log('\n')
+        })
+    })
