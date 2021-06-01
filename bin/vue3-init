@@ -8,7 +8,7 @@ const tplObj = require(`${__dirname}/../template`)
 program
     .usage(`<template-name> [project-name]`)
 
-program.parse(progress.argv)
+program.parse(process.argv)
 
 if (program.args.length < 1) { 
     return program.help()
@@ -36,6 +36,7 @@ download(
     url,
     projectName,
     err => {
+        console.log(url,projectName )
         if (err) {
             spinner.fail()
             return console.log(chalk.red(`Generation failed. ${err}`))
