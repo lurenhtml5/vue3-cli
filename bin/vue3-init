@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const program = require('commander')
 const chalk = require('chalk')
+const exec = require('child_process').exec
 const ora = require('ora')
 const download = require('download-git-repo')
 const tplObj = require(`${__dirname}/../template`)
@@ -32,18 +33,14 @@ console.log(chalk.white('\n Start generating... \n'))
 const spinner = ora("Downloading...") // 过渡效果
 spinner.start()
 
-download(
-    url,
-    projectName,
-    err => {
-        console.log(url,projectName )
-        if (err) {
-            spinner.fail()
-            return console.log(chalk.red(`Generation failed. ${err}`))
-        }
-        spinner.succeed()
-        console.log(chalk.green('\n Generation completed!'))
-        console.log('\n To get started')
-        console.log(`\n    cd ${projectName} \n`)
+const commanderStr = `git clone ${url} ${projectName} && cd ${projectName}`
+
+exec(commanderStr, (error, stdout, stderr) => {
+    if (error) {
+        console.log(error)
+        return process.exit()
     }
-)
+    spinner.succeed()
+    console.log(chalk.green('\n Generation completed!'))
+    console.log('\n To get started')
+})

@@ -5,8 +5,12 @@ program
     .version(require('../package').version)
     .usage('<command> [options]')
     .command('add', 'add a new template')
+    .alias('a')
     .command('delete', 'delete a template')
+    .alias('d')
     .command('list', 'list all the templates')
+    .alias('l')
     .command('init', 'generate a new project from a template')
+    .alias('i')
 
 program.parse(process.argv)
